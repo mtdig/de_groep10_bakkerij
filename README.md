@@ -11,7 +11,7 @@
 
 Install [Git](https://git-scm.com/install/) if you don't already have it.
 
-Install [Java (21 or newer)](https://www.java.com/en/download/manual.jsp) if you don't already have it. (Sorry, friends let friends use java.)
+Install [Java (21 or newer)](https://www.java.com/en/download/manual.jsp) if you don't already have it. (Sorry, friends don't let friends use java.)
 
 Change into a project directory of your choice and clone the project.
 
