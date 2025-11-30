@@ -55,17 +55,20 @@ public class Application {
         System.out.println("Initializing bakery products...");
         productRepository.loadProducts("bread_details.json");
         
+        // Get port from environment or use default
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
+        
         // Create and configure Javalin app
         Javalin app = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
             config.staticFiles.add("/public");
-        }).start(7070);
+        }).start(port);
 
         // Configure routes
         configureRoutes(app, homeHandler, productHandler, cartHandler, accountHandler, paymentHandler);
 
-        System.out.println("De Groep10 Bakkerij server started on http://localhost:7070");
-        System.out.println("Navigate to http://localhost:7070 to view the application");
+        System.out.println("De Groep10 Bakkerij server started on http://localhost:" + port);
+        System.out.println("Navigate to http://localhost:" + port + " to view the application");
     }
 
     private static void configureRoutes(Javalin app, HomeHandler homeHandler, ProductHandler productHandler,

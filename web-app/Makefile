@@ -1,4 +1,4 @@
-include .env
+-include .env
 export DOCKER_REGISTRY
 
 VERSION := $(shell cat src/main/resources/VERSION.txt)
