@@ -4,6 +4,7 @@ import com.example.bakkerij.handler.*;
 import com.example.bakkerij.repository.*;
 import com.example.bakkerij.service.*;
 import com.example.bakkerij.util.*;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.javalin.Javalin;
 
 import java.io.InputStream;
@@ -25,6 +26,11 @@ public class Application {
     }
 
     public static void main(String[] args) {
+        // Load .env file if it exists
+        Dotenv dotenv = Dotenv.configure()
+            .ignoreIfMissing()
+            .load();
+        
         // Initialize repositories
         ProductRepository productRepository = new ProductRepository();
         CartRepository cartRepository = new CartRepository();
@@ -56,7 +62,7 @@ public class Application {
         productRepository.loadProducts("bread_details.json");
         
         // Get port from environment or use default
-        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
+        int port = Integer.parseInt(dotenv.get("PORT", "7070"));
         
         // Create and configure Javalin app
         Javalin app = Javalin.create(config -> {
