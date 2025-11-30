@@ -22,7 +22,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.App</mainClass>
+                  <mainClass>com.example.bakkerij.Application</mainClass>
                 </transformer>
               </transformers>
             </configuration>

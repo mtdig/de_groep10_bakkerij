@@ -20,8 +20,11 @@ clean: ## Clean build artifacts
 build: ## Build the project with Maven
 	mvn clean package
 
+test: ## Run unit tests
+	mvn test
+
 run: build ## Build and run the application locally
-	mvn exec:java -Dexec.mainClass="com.example.App"
+	mvn exec:java -Dexec.mainClass="com.example.bakkerij.Application"
 
 docker-build: ## Build Docker image
 	docker build -t bakkerij:$(VERSION) .
