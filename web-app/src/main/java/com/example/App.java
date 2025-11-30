@@ -154,7 +154,7 @@ public class App {
         }).start(7070);
 
         // Define routes - root route FIRST to ensure it takes precedence
-        // TODO: group routes with routers
+        // TODO: group routes with routers (cart, products, account, payment, etc.)
         app.get("/", App::getHome);
         
         app.get("/cart/count", App::getCartCount);
@@ -242,6 +242,7 @@ public class App {
             String lang = ctx.queryParam("lang") != null ? ctx.queryParam("lang") : "nl";
             
             // Load bread details JSON
+            // TODO: get filename from environment variable
             InputStream is = App.class.getClassLoader().getResourceAsStream("bread_details.json");
             if (is == null) {
                 ctx.status(404).result("Product details not found");
@@ -731,7 +732,7 @@ public class App {
             cart.put(item.product.id, cart.getOrDefault(item.product.id, 0) + item.quantity);
         }
         
-        // Trigger modal via HX-Trigger header
+        // Trigger modal via HX-Trigger header (cool trick!)
         ctx.header("HX-Trigger", "{\"showCartModal\":{\"lang\":\"" + lang + "\",\"type\":\"repeat\"}}");
         
         // Return updated cart count

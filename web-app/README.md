@@ -3,7 +3,7 @@
 A super simple, fast Single Page Application built with:
 - **Java** (no Spring!) - using Javalin microframework
 - [**Jinjava**](https://github.com/HubSpot/jinjava) - real Jinja2 templating for Java
-- **HTMX** - Awesome library for dynamic updates without writing JavaScript
+- [**HTMX**](https://htmx.org/) - Awesome library for dynamic updates without writing JavaScript
 - **Minimal CSS** - clean and simple styling (with the help of ai for restructuring, completing, ..), bootstrap would have saved time, tailwindcss would have saved size
 
 ## Why This Stack?
@@ -76,14 +76,38 @@ web-app/
 
 ## How It Works
 
-### HTMX Attributes Used:
+### [HTMX](https://htmx.org)
 
-- `hx-get` - Fetches content from server
-- `hx-post` - Sends form data
-- `hx-delete` - Sends delete request
-- `hx-put` - Sends update request
-- `hx-target` - Specifies which element to update
-- `hx-swap` - Controls how content is swapped
-- `hx-trigger` - When to trigger the request
+Extends html with dynamic/active keywords: hx-get, hx-post, ...
+The idea is make any html component dynamic and to only update parts of the DOM.
+This helps me keep everything together where that makes sense.  For simple things, we don't need yet another application in yet another programming language.
 
+### [jinja2](https://jinja.palletsprojects.com/en/stable/)
+Powerful and popular templating framework best known in the python world. It supports basic programming logic, allowing for conditional html.
+
+```jinja
+<select name="product" id="products">
+{% for item in items %}
+   <option value="{{ item.name }}">{{ item.description }}</option>
+{% endfor %}
+</select>
+```
+
+### [jinjava](https://github.com/HubSpot/jinjava)
+Jinja2 template rendering engine for java.
+
+```java
+context.put("items", items);
+jinjava.render(template, context);
+```
+
+### [Docker (Desktop)](https://www.docker.com/products/docker-desktop/)
+
+Containers.  Independent.  Smaller than virtual machines, larger than wasm.
+
+
+### [Make](https://makefiletutorial.com/)
+
+Command runner, historically used for compiling and linking C code.  I still use it as an extra layer on top of go, rust, ..
+There might be a better alternative: [just](https://github.com/casey/just)
 
