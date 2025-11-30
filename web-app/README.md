@@ -16,7 +16,7 @@ A super simple, fast Single Page Application built with:
 
 
 ## Project Structure
-
+```
 web-app/
 ├── pom.xml
 ├── src/
@@ -29,6 +29,8 @@ web-app/
 │           │   ├──> jinja2 templates, the website
 │           └── public/
 │               └── static content: css, javascript, images
+```
+
 
 ## Running the App
 
