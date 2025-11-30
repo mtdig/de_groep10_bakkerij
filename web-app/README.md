@@ -76,6 +76,10 @@ web-app/
 
 ## How It Works
 
+### [Javalin](https://javalin.io/documentation)
+
+Lightweight and fast webserver, built on top of [Jetty](https://jetty.org/index.html), for java and kotlin.
+
 ### [HTMX](https://htmx.org)
 
 Extends html with dynamic/active keywords: hx-get, hx-post, ...

@@ -1,9 +1,9 @@
 
 ![De Bakkerij](images/hero.png)
 
--> [README.md](web-app/README.md)
+-> [README.md for the more in-depth doc about the website](web-app/README.md)
 
--> [breadandbytes.be](https://breadandbytes.be)
+-> [go browse breadandbytes.be](https://breadandbytes.be)
 
 
 
@@ -85,3 +85,8 @@ Loaded 9 products from bread_details.json
 De Groep10 Bakkerij server started on http://localhost:7070
 Navigate to http://localhost:7070 to view the application
 ```
+
+
+## TODO
+
+- [ ] add hot reload
