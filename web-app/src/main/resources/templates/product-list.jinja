@@ -1,0 +1,45 @@
+{% if products|length > 0 %}
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-image">
+            <img src="/img/{{ product.image }}" alt="{{ product.nameNl }}">
+        </div>
+        <div class="product-info">
+            <div class="product-header">
+                <h3>{% if lang == 'nl' %}{{ product.nameNl }}{% elif lang == 'fr' %}{{ product.nameFr }}{% elif lang == 'en' %}{{ product.nameEn }}{% elif lang == 'de' %}{{ product.nameDe }}{% elif lang == 'es' %}{{ product.nameEs }}{% elif lang == 'zh' %}{{ product.nameZh }}{% else %}{{ product.nameNl }}{% endif %}</h3>
+                <button type="button" class="product-info-btn" title="{{ t.click_for_info }}" onclick="showProductDetails({{ product.id }}, '{{ lang }}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="product-description">{% if lang == 'nl' %}{{ product.descriptionNl }}{% elif lang == 'fr' %}{{ product.descriptionFr }}{% elif lang == 'en' %}{{ product.descriptionEn }}{% elif lang == 'de' %}{{ product.descriptionDe }}{% elif lang == 'es' %}{{ product.descriptionEs }}{% elif lang == 'zh' %}{{ product.descriptionZh }}{% else %}{{ product.descriptionNl }}{% endif %}</p>
+            <div class="product-footer">
+                <span class="product-price">€{{ "%.2f"|format(product.price) }}</span>
+                <form hx-post="/cart/add/{{ product.id }}?lang={{ lang }}" 
+                      hx-target="#cart-badge"
+                      hx-swap="innerHTML"
+                      class="add-to-cart-form">
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                    <button type="submit" class="add-to-cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            <line x1="12" y1="8" x2="12" y2="14"/>
+                            <line x1="9" y1="11" x2="15" y2="11"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-category">
+        <img src="/img/zit_nog_in_de_oven.jpg" alt="Zit nog in de oven">
+        <p class="empty-message">{{ t.category_empty }}</p>
+    </div>
+{% endif %}

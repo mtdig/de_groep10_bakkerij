@@ -1,0 +1,252 @@
+<div class="mobile-filter-controls mobile-only">
+    <div class="category-select-container">
+        <select class="category-select" id="category-select">
+            <option value="all" {% if category == 'all' %}selected{% endif %}>{{ t.all }}</option>
+            <option value="brood" {% if category == 'brood' %}selected{% endif %}>{{ t.bread }}</option>
+            <option value="speciaal-brood" {% if category == 'speciaal-brood' %}selected{% endif %}>{{ t.special_bread }}</option>
+            <option value="klein-brood" {% if category == 'klein-brood' %}selected{% endif %}>{{ t.small_bread }}</option>
+            <option value="koeken" {% if category == 'koeken' %}selected{% endif %}>{{ t.cakes }}</option>
+            <option value="taarten" {% if category == 'taarten' %}selected{% endif %}>{{ t.pies }}</option>
+            <option value="belegde-broodjes" {% if category == 'belegde-broodjes' %}selected{% endif %}>{{ t.sandwiches }}</option>
+            <option value="diverse" {% if category == 'diverse' %}selected{% endif %}>{{ t.miscellaneous }}</option>
+        </select>
+    </div>
+    <div class="filters-dropdown-container mobile-filters">
+        <button class="filters-toggle-btn" id="filters-toggle-mobile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>{{ t.filters }}</span>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+
+        <!-- Mobile filters dropdown -->
+        <div class="filters-dropdown filters-dropdown-mobile" id="filters-dropdown-mobile">
+            {% if category != 'all' %}
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    {% if category == 'brood' or category == 'speciaal-brood' or category == 'klein-brood' %}
+                        {{ t.filter_type }}
+                    {% elif category == 'koeken' %}
+                        {{ t.filter_variety }}
+                    {% elif category == 'taarten' %}
+                        {{ t.filter_size }}
+                    {% elif category == 'belegde-broodjes' %}
+                        {{ t.filter_topping }}
+                    {% else %}
+                        {{ t.filter_label }}
+                    {% endif %}
+                </h3>
+                <div class="filter-tags" id="type-filters-mobile">
+                    {% if category == 'brood' or category == 'speciaal-brood' or category == 'klein-brood' %}
+                        <button class="tag-filter" data-filter="white">{{ t.white }}</button>
+                        <button class="tag-filter" data-filter="dark">{{ t.dark }}</button>
+                        <button class="tag-filter" data-filter="whole-grain">{{ t.whole_grain }}</button>
+                        <button class="tag-filter" data-filter="multigrain">{{ t.multigrain }}</button>
+                    {% elif category == 'koeken' %}
+                        <button class="tag-filter" data-filter="chocolate">{{ t.chocolate }}</button>
+                        <button class="tag-filter" data-filter="vanilla">{{ t.vanilla }}</button>
+                        <button class="tag-filter" data-filter="fruit">{{ t.fruit }}</button>
+                        <button class="tag-filter" data-filter="nut">{{ t.nuts }}</button>
+                    {% elif category == 'taarten' %}
+                        <button class="tag-filter" data-filter="small">{{ t.small_4_6 }}</button>
+                        <button class="tag-filter" data-filter="medium">{{ t.medium_8_10 }}</button>
+                        <button class="tag-filter" data-filter="large">{{ t.large_12_plus }}</button>
+                    {% elif category == 'belegde-broodjes' %}
+                        <button class="tag-filter" data-filter="cheese">{{ t.cheese }}</button>
+                        <button class="tag-filter" data-filter="ham">{{ t.ham }}</button>
+                        <button class="tag-filter" data-filter="veggie">{{ t.veggie }}</button>
+                        <button class="tag-filter" data-filter="chicken">{{ t.chicken }}</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="filter-section">
+                <h3 class="filter-title">{{ t.allergens }}</h3>
+                <div class="filter-tags" id="allergen-filters-mobile">
+                    <button class="tag-filter allergen-filter" data-allergen="gluten">{{ t.gluten_free }}</button>
+                    <button class="tag-filter allergen-filter" data-allergen="lactose">{{ t.lactose_free }}</button>
+                    <button class="tag-filter allergen-filter" data-allergen="nuts">{{ t.nut_free }}</button>
+                    <button class="tag-filter allergen-filter" data-allergen="eggs">{{ t.egg_free }}</button>
+                    <button class="tag-filter allergen-filter" data-allergen="soy">{{ t.soy_free }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="filter-buttons desktop-only">
+    <button class="filter-btn {% if category == 'all' %}active{% endif %}" 
+            hx-get="/products/all?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.all }}
+    </button>
+    <button class="filter-btn {% if category == 'brood' %}active{% endif %}" 
+            hx-get="/products/brood?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.bread }}
+    </button>
+    <button class="filter-btn {% if category == 'speciaal-brood' %}active{% endif %}" 
+            hx-get="/products/speciaal-brood?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.special_bread }}
+    </button>
+    <button class="filter-btn {% if category == 'klein-brood' %}active{% endif %}" 
+            hx-get="/products/klein-brood?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.small_bread }}
+    </button>
+    <button class="filter-btn {% if category == 'koeken' %}active{% endif %}" 
+            hx-get="/products/koeken?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.cakes }}
+    </button>
+    <button class="filter-btn {% if category == 'taarten' %}active{% endif %}" 
+            hx-get="/products/taarten?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.pies }}
+    </button>
+    <button class="filter-btn {% if category == 'belegde-broodjes' %}active{% endif %}" 
+            hx-get="/products/belegde-broodjes?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.sandwiches }}
+    </button>
+    <button class="filter-btn {% if category == 'diverse' %}active{% endif %}" 
+            hx-get="/products/diverse?lang={{ lang }}" 
+            hx-target="#products-area"
+            hx-swap="innerHTML"
+            hx-push-url="/products?lang={{ lang }}">
+        {{ t.miscellaneous }}
+    </button>
+</div>
+
+<div class="filters-dropdown-container desktop-only">
+    <button class="filters-toggle-btn" id="filters-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </svg>
+        <span>{{ t.filters }}</span>
+        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+    </button>
+
+    <!-- Shared filters dropdown for both mobile and desktop -->
+    <div class="filters-dropdown" id="filters-dropdown">
+    {% if category != 'all' %}
+    <div class="filter-section">
+            <h3 class="filter-title">
+                {% if category == 'brood' or category == 'speciaal-brood' or category == 'klein-brood' %}
+                    {{ t.filter_type }}
+                {% elif category == 'koeken' %}
+                    {{ t.filter_variety }}
+                {% elif category == 'taarten' %}
+                    {{ t.filter_size }}
+                {% elif category == 'belegde-broodjes' %}
+                    {{ t.filter_topping }}
+                {% else %}
+                    {{ t.filter_label }}
+                {% endif %}
+            </h3>
+            <div class="filter-tags" id="type-filters">
+                {% if category == 'brood' or category == 'speciaal-brood' or category == 'klein-brood' %}
+                    <button class="tag-filter" data-filter="white">{{ t.white }}</button>
+                    <button class="tag-filter" data-filter="dark">{{ t.dark }}</button>
+                    <button class="tag-filter" data-filter="whole-grain">{{ t.whole_grain }}</button>
+                    <button class="tag-filter" data-filter="multigrain">{{ t.multigrain }}</button>
+                {% elif category == 'koeken' %}
+                    <button class="tag-filter" data-filter="chocolate">{{ t.chocolate }}</button>
+                    <button class="tag-filter" data-filter="vanilla">{{ t.vanilla }}</button>
+                    <button class="tag-filter" data-filter="fruit">{{ t.fruit }}</button>
+                    <button class="tag-filter" data-filter="nut">{{ t.nuts }}</button>
+                {% elif category == 'taarten' %}
+                    <button class="tag-filter" data-filter="small">{{ t.small_4_6 }}</button>
+                    <button class="tag-filter" data-filter="medium">{{ t.medium_8_10 }}</button>
+                    <button class="tag-filter" data-filter="large">{{ t.large_12_plus }}</button>
+                {% elif category == 'belegde-broodjes' %}
+                    <button class="tag-filter" data-filter="cheese">{{ t.cheese }}</button>
+                    <button class="tag-filter" data-filter="ham">{{ t.ham }}</button>
+                    <button class="tag-filter" data-filter="veggie">{{ t.veggie }}</button>
+                    <button class="tag-filter" data-filter="chicken">{{ t.chicken }}</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="filter-section">
+            <h3 class="filter-title">{{ t.allergens }}</h3>
+            <div class="filter-tags" id="allergen-filters">
+                <button class="tag-filter allergen-filter" data-allergen="gluten">{{ t.gluten_free }}</button>
+                <button class="tag-filter allergen-filter" data-allergen="lactose">{{ t.lactose_free }}</button>
+                <button class="tag-filter allergen-filter" data-allergen="nuts">{{ t.nut_free }}</button>
+                <button class="tag-filter allergen-filter" data-allergen="eggs">{{ t.egg_free }}</button>
+                <button class="tag-filter allergen-filter" data-allergen="soy">{{ t.soy_free }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="product-grid" class="product-grid">
+{% if products|length > 0 %}
+    {% for product in products %}
+    <div class="product-card" data-product-id="{{ product.id }}">
+        <div class="product-image">
+            <img src="/img/{{ product.image }}" alt="{{ product.nameNl }}" data-product-image="/img/{{ product.image }}">
+        </div>
+        <div class="product-info">
+            <div class="product-header">
+                <h3>{% if lang == 'nl' %}{{ product.nameNl }}{% elif lang == 'fr' %}{{ product.nameFr }}{% elif lang == 'en' %}{{ product.nameEn }}{% elif lang == 'de' %}{{ product.nameDe }}{% elif lang == 'es' %}{{ product.nameEs }}{% elif lang == 'zh' %}{{ product.nameZh }}{% else %}{{ product.nameNl }}{% endif %}</h3>
+                <button type="button" class="product-info-btn" title="{{ t.click_for_info }}" onclick="showProductDetails({{ product.id }}, '{{ lang }}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="product-description">{% if lang == 'nl' %}{{ product.descriptionNl }}{% elif lang == 'fr' %}{{ product.descriptionFr }}{% elif lang == 'en' %}{{ product.descriptionEn }}{% elif lang == 'de' %}{{ product.descriptionDe }}{% elif lang == 'es' %}{{ product.descriptionEs }}{% elif lang == 'zh' %}{{ product.descriptionZh }}{% else %}{{ product.descriptionNl }}{% endif %}</p>
+            <div class="product-footer">
+                <span class="product-price">€{{ "%.2f"|format(product.price) }}</span>
+                <form hx-post="/cart/add/{{ product.id }}?lang={{ lang }}" 
+                      hx-target="#cart-badge"
+                      hx-swap="innerHTML"
+                      class="add-to-cart-form">
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                    <button type="submit" class="add-to-cart-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            <line x1="12" y1="8" x2="12" y2="14"/>
+                            <line x1="9" y1="11" x2="15" y2="11"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-category">
+        <img src="/img/zit_nog_in_de_oven.jpg" alt="Zit nog even in de oven">
+        <p class="empty-message">{{ t.category_empty }}</p>
+    </div>
+{% endif %}
+</div>

@@ -1,0 +1,215 @@
+<section class="pickup-section">
+    <div class="container">
+        <h1>{{ t.choose_pickup }}</h1>
+        
+        <form id="pickup-form" hx-post="/pickup/confirm?lang={{ lang }}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/payment?lang={{ lang }}">
+            <div class="pickup-row">
+                <div class="form-group calendar-group">
+                    <input type="hidden" id="pickup-date" name="pickupDate" required
+                           data-min="{{ minDate }}" data-max="{{ maxDate }}">
+                    <div id="calendar-widget" class="calendar-widget"></div>
+                </div>
+                
+                <div class="form-group time-slots-group">
+                    <label>
+                        {{ t.pickup_window }}
+                    </label>
+                    <input type="hidden" id="pickup-time" name="pickupTime" required>
+                    <div class="time-slots-grid" id="time-slots">
+                        <!-- Time slots will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="/cart?lang={{ lang }}" 
+                   hx-get="/cart?lang={{ lang }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="btn-secondary">
+                    {{ t.back }}
+                </a>
+                <button type="submit" class="btn-primary">
+                    {{ t.proceed_to_payment }}
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    // Calendar widget
+    const lang = '{{ lang }}';
+    const monthNames = {
+        'nl': ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'],
+        'fr': ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+        'en': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'de': ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+        'es': ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        'zh': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+    };
+    const dayNames = {
+        'nl': ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'],
+        'fr': ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
+        'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        'de': ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+        'es': ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        'zh': ['日', '一', '二', '三', '四', '五', '六']
+    };
+    
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let selectedDate = null;
+    
+    const dateInput = document.getElementById('pickup-date');
+    const minDate = new Date(dateInput.dataset.min);
+    const maxDate = new Date(dateInput.dataset.max);
+    
+    function renderCalendar() {
+        const calendar = document.getElementById('calendar-widget');
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const startDay = firstDay.getDay();
+        
+        let html = `
+            <div class="calendar-header">
+                <button type="button" class="calendar-nav" onclick="changeMonth(-1)">◀</button>
+                <div class="calendar-month">${monthNames[lang][currentMonth]} ${currentYear}</div>
+                <button type="button" class="calendar-nav" onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="calendar-days">
+                ${dayNames[lang].map(day => `<div class="calendar-day-name">${day}</div>`).join('')}
+            </div>
+            <div class="calendar-grid">
+        `;
+        
+        // Empty cells before first day
+        for (let i = 0; i < startDay; i++) {
+            html += '<div class="calendar-cell empty"></div>';
+        }
+        
+        // Days of month
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            const dateStr = date.toISOString().split('T')[0];
+            const isDisabled = date < minDate || date > maxDate;
+            const isSelected = selectedDate && date.toISOString().split('T')[0] === selectedDate;
+            const isToday = date.toDateString() === new Date().toDateString();
+            
+            let className = 'calendar-cell';
+            if (isDisabled) className += ' disabled';
+            if (isSelected) className += ' selected';
+            if (isToday) className += ' today';
+            
+            html += `<div class="${className}" data-date="${dateStr}" onclick="selectDate('${dateStr}')">${day}</div>`;
+        }
+        
+        html += '</div></div>';
+        calendar.innerHTML = html;
+    }
+    
+    function changeMonth(delta) {
+        currentMonth += delta;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar();
+    }
+    
+    function selectDate(dateStr) {
+        const date = new Date(dateStr);
+        if (date < minDate || date > maxDate) return;
+        
+        selectedDate = dateStr;
+        dateInput.value = dateStr;
+        renderCalendar();
+        updateTimeSlots();
+    }
+    
+    // Update time slots based on selected date
+    function updateTimeSlots() {
+        const slotsGrid = document.getElementById('time-slots');
+        const hiddenInput = document.getElementById('pickup-time');
+        
+        if (!selectedDate) {
+            slotsGrid.innerHTML = '<p class="select-date-prompt">' + translations.select_date_first + '</p>';
+            return;
+        }
+        
+        const date = new Date(selectedDate);
+        const dayOfWeek = date.getDay();
+        
+        let timeSlots = [];
+        
+        // Generate 15-minute time slots
+        function generateSlots(startHour, startMin, endHour, endMin) {
+            const slots = [];
+            let hour = startHour;
+            let min = startMin;
+            
+            while (hour < endHour || (hour === endHour && min < endMin)) {
+                const timeStr = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+                slots.push(timeStr);
+                
+                min += 15;
+                if (min >= 60) {
+                    min = 0;
+                    hour++;
+                }
+            }
+            return slots;
+        }
+        
+        if (dayOfWeek === 0) {
+            // Sunday: 08:00-14:00
+            timeSlots = generateSlots(8, 0, 14, 0);
+        } else if (dayOfWeek === 6) {
+            // Saturday: 07:00-18:00
+            timeSlots = generateSlots(7, 0, 18, 0);
+        } else {
+            // Weekdays: 07:00-19:00
+            timeSlots = generateSlots(7, 0, 19, 0);
+        }
+        
+        slotsGrid.innerHTML = '';
+        
+        // Randomly mark some slots as unavailable (for demo purposes)
+        const unavailableCount = Math.floor(Math.random() * 5) + 3; // 3-7 random slots
+        const unavailableIndices = new Set();
+        while (unavailableIndices.size < Math.min(unavailableCount, timeSlots.length / 2)) {
+            unavailableIndices.add(Math.floor(Math.random() * timeSlots.length));
+        }
+        
+        timeSlots.forEach((slot, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'time-slot-btn';
+            button.textContent = slot;
+            button.dataset.value = slot;
+            
+            if (unavailableIndices.has(index)) {
+                button.classList.add('disabled');
+                button.disabled = true;
+            } else {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    hiddenInput.value = slot;
+                });
+            }
+            
+            slotsGrid.appendChild(button);
+        });
+    }
+    
+    // Initialize calendar
+    renderCalendar();
+    updateTimeSlots();
+</script>

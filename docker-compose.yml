@@ -1,0 +1,8 @@
+name: breadandbytes
+services:
+ breadandbytes:
+   image: 192.168.0.66:5000/bakkerij:latest
+   restart: always
+   container_name: breadandbytes
+   ports:
+      - "7070:7070"

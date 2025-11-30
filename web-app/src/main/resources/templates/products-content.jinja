@@ -1,0 +1,208 @@
+<section class="products-section">
+    <div class="container">
+        <h1>{{ t.our_products }}</h1>
+        
+        <div id="products-area">
+            {% include 'templates/products-area.jinja' %}
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    // Get translations for JavaScript
+    const emptyMessage = "{{ t.no_products_match_filter }}";
+    
+    // Client-side filtering for products
+    const activeFilters = {
+        type: [],
+        allergens: []
+    };
+    
+    function initializeFilters() {
+        // Category dropdown handler for mobile
+        const categorySelect = document.getElementById('category-select');
+        if (categorySelect) {
+            categorySelect.addEventListener('change', function(e) {
+                const lang = '{{ lang }}';
+                const category = e.target.value;
+                htmx.ajax('GET', `/products/${category}?lang=${lang}`, {
+                    target: '#products-area',
+                    swap: 'innerHTML'
+                });
+                // Update URL
+                history.pushState(null, '', `/products?lang=${lang}`);
+            });
+        }
+        
+        // Toggle dropdown - handle both mobile and desktop buttons
+        const dropdown = document.getElementById('filters-dropdown');
+        const dropdownMobile = document.getElementById('filters-dropdown-mobile');
+        let toggleBtn = document.getElementById('filters-toggle');
+        let toggleBtnMobile = document.getElementById('filters-toggle-mobile');
+        
+        const setupToggle = (btn, targetDropdown) => {
+            if (btn && targetDropdown) {
+                // Remove old listeners by cloning
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    targetDropdown.classList.toggle('open');
+                    newBtn.classList.toggle('active');
+                });
+                
+                return newBtn;
+            }
+            return null;
+        };
+        
+        toggleBtn = setupToggle(toggleBtn, dropdown);
+        toggleBtnMobile = setupToggle(toggleBtnMobile, dropdownMobile);
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (dropdown && toggleBtn) {
+                const isToggleBtn = (toggleBtn && (e.target === toggleBtn || toggleBtn.contains(e.target)));
+                if (!dropdown.contains(e.target) && !isToggleBtn) {
+                    dropdown.classList.remove('open');
+                    if (toggleBtn) toggleBtn.classList.remove('active');
+                }
+            }
+            
+            if (dropdownMobile && toggleBtnMobile) {
+                const isToggleBtnMobile = (toggleBtnMobile && (e.target === toggleBtnMobile || toggleBtnMobile.contains(e.target)));
+                if (!dropdownMobile.contains(e.target) && !isToggleBtnMobile) {
+                    dropdownMobile.classList.remove('open');
+                    if (toggleBtnMobile) toggleBtnMobile.classList.remove('active');
+                }
+            }
+        });
+        
+        // Type filter handlers
+        document.querySelectorAll('.tag-filter:not(.allergen-filter)').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                    activeFilters.type = activeFilters.type.filter(f => f !== filter);
+                } else {
+                    this.classList.add('active');
+                    activeFilters.type.push(filter);
+                }
+                
+                updateProductDisplay();
+            });
+        });
+        
+        // Allergen filter handlers
+        document.querySelectorAll('.allergen-filter').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const allergen = this.dataset.allergen;
+                
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                    activeFilters.allergens = activeFilters.allergens.filter(a => a !== allergen);
+                } else {
+                    this.classList.add('active');
+                    activeFilters.allergens.push(allergen);
+                }
+                
+                updateProductDisplay();
+            });
+        });
+    }
+    
+    function updateProductDisplay() {
+        const productCards = document.querySelectorAll('.product-card');
+        
+        productCards.forEach(card => {
+            let shouldShow = true;
+            
+            // Apply type filters (if any active)
+            if (activeFilters.type.length > 0) {
+                // For demo: filter based on product name/description keywords
+                const productText = card.textContent.toLowerCase();
+                const matchesType = activeFilters.type.some(filter => {
+                    const keywords = getFilterKeywords(filter);
+                    return keywords.some(keyword => productText.includes(keyword));
+                });
+                shouldShow = shouldShow && matchesType;
+            }
+            
+            // Apply allergen filters (show only products WITHOUT these allergens)
+            if (activeFilters.allergens.length > 0) {
+                // For demo: assume all products are safe unless description mentions allergen
+                const productText = card.textContent.toLowerCase();
+                const containsAllergen = activeFilters.allergens.some(allergen => {
+                    const keywords = getAllergenKeywords(allergen);
+                    return keywords.some(keyword => productText.includes(keyword));
+                });
+                shouldShow = shouldShow && !containsAllergen;
+            }
+            
+            card.style.display = shouldShow ? 'block' : 'none';
+        });
+        
+        // Show/hide empty message
+        const visibleCards = Array.from(productCards).filter(card => card.style.display !== 'none');
+        const emptyCategory = document.querySelector('.empty-category');
+        if (visibleCards.length === 0 && !emptyCategory) {
+            const grid = document.getElementById('product-grid');
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-category';
+            emptyDiv.innerHTML = '<p class="empty-message">' + emptyMessage + '</p>';
+            grid.appendChild(emptyDiv);
+        } else if (visibleCards.length > 0 && emptyCategory) {
+            emptyCategory.remove();
+        }
+    }
+    
+    function getFilterKeywords(filter) {
+        const keywordMap = {
+            'white': ['wit', 'blanc', 'white', 'weiß', 'blanco', '白'],
+            'dark': ['donker', 'foncé', 'dark', 'bruin', 'dunkel', 'oscuro', '黑', '褐'],
+            'whole-grain': ['volkoren', 'complet', 'whole', 'vollkorn', 'integral', '全麦'],
+            'multigrain': ['meergranen', 'multicéréales', 'granen', 'multigrain', 'mehrkorn', 'multigranos', '多谷物'],
+            'chocolate': ['chocolade', 'chocolat', 'cacao', 'chocolate', 'schokolade', '巧克力'],
+            'vanilla': ['vanille', 'vanilla', 'vainilla', '香草'],
+            'fruit': ['fruit', 'framboos', 'aardbei', 'appel', 'frucht', 'obst', 'fruta', '水果'],
+            'nut': ['noten', 'noix', 'amandel', 'hazelnoot', 'nut', 'nuss', 'nuez', '坚果'],
+            'small': ['klein', 'petit', 'small', 'groß', 'pequeño', '小'],
+            'medium': ['middel', 'moyen', 'medium', 'mittel', 'mediano', '中'],
+            'large': ['groot', 'grand', 'large', 'groß', 'grande', '大'],
+            'cheese': ['kaas', 'fromage', 'cheese', 'käse', 'queso', '奶酪'],
+            'ham': ['ham', 'jambon', 'schinken', 'jamón', '火腿'],
+            'veggie': ['groente', 'végét', 'veggie', 'vegetable', 'gemüse', 'verdura', '蔬菜'],
+            'chicken': ['kip', 'poulet', 'chicken', 'huhn', 'pollo', '鸡肉']
+        };
+        return keywordMap[filter] || [filter];
+    }
+    
+    function getAllergenKeywords(allergen) {
+        const keywordMap = {
+            'gluten': ['gluten', 'tarwe', 'blé', 'wheat', 'weizen', 'trigo', '麸质'],
+            'lactose': ['lactose', 'melk', 'lait', 'kaas', 'fromage', 'milk', 'dairy', 'cheese', 'milch', 'käse', 'leche', 'queso', '乳糖', '牛奶'],
+            'nuts': ['noten', 'noix', 'amandel', 'hazelnoot', 'nuts', 'nuss', 'nuez', '坚果'],
+            'eggs': ['ei', 'œuf', 'egg', 'eier', 'huevo', '鸡蛋'],
+            'soy': ['soja', 'soy', 'soybean', '大豆']
+        };
+        return keywordMap[allergen] || [allergen];
+    }
+    
+    // Initialize on page load
+    initializeFilters();
+    
+    // Re-initialize after HTMX swaps content
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === 'products-area') {
+            // Reset filters when category changes
+            activeFilters.type = [];
+            activeFilters.allergens = [];
+            initializeFilters();
+        }
+    });
+})();
+</script>

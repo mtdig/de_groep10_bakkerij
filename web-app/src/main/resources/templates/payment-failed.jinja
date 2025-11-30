@@ -1,0 +1,21 @@
+{% extends "base.jinja" %}
+
+{% block main %}
+<section class="payment-result-section failed">
+    <div class="container">
+        <div class="payment-result">
+            <div class="result-icon failed-icon">✕</div>
+            <h1>{{ t.payment_failed }}</h1>
+            <p>{{ t.payment_failed_msg }}</p>
+            <div class="result-actions">
+                <a href="/payment?lang={{ lang }}" class="cta-button">
+                    {{ t.try_again }}
+                </a>
+                <a href="/payment?lang={{ lang }}" class="secondary-button">
+                    {{ t.other_payment }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

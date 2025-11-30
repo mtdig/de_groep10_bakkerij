@@ -1,0 +1,31 @@
+<section class="payment-result-section failed">
+    <div class="container">
+        <div class="payment-result">
+            <div class="result-icon failed-icon">✕</div>
+            <h1>{{ t.payment_failed }}</h1>
+            <p>{{ t.payment_failed_msg }}</p>
+            <div class="result-actions">
+                <button onclick="retryPayment()" class="cta-button">
+                    {{ t.try_again }}
+                </button>
+                <a href="/cart?lang={{ lang }}" 
+                   hx-get="/cart?lang={{ lang }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="secondary-button">
+                    {{ t.back_to_cart }}
+                </a>
+            </div>
+            <script>
+                function retryPayment() {
+                    const lang = '{{ lang }}';
+                    const lastMethod = sessionStorage.getItem('lastPaymentMethod');
+                    if (lastMethod) {
+                        window.location.href = '/payment?lang=' + lang + '&retry=true&method=' + lastMethod;
+                    }
+                }
+            </script>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,76 @@
+<section class="payment-section">
+    <div class="container">
+        <h1>{{ t.choose_payment }}</h1>
+        
+        <div class="payment-methods">
+            <button type="button" class="payment-method-btn" onclick="processPayment('cash')">
+                <div class="payment-logo">💵</div>
+                <span>{{ t.pay_on_pickup }}</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('mollie')">
+                <div class="payment-logo">
+                    <img src="/img/logos/mollie.png" alt="Mollie">
+                </div>
+                <span>Mollie</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('paypal')">
+                <div class="payment-logo">
+                    <img src="/img/logos/paypal.png" alt="PayPal">
+                </div>
+                <span>PayPal</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('bancontact')">
+                <div class="payment-logo">
+                    <img src="/img/logos/bancontact.png" alt="Bancontact">
+                </div>
+                <span>Bancontact</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('bnp')">
+                <div class="payment-logo">
+                    <img src="/img/logos/bnpparibasfortis.png" alt="BNP Paribas Fortis">
+                </div>
+                <span>BNP Paribas</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('ideal')">
+                <div class="payment-logo">
+                    <img src="/img/logos/ideal.png" alt="iDEAL">
+                </div>
+                <span>iDEAL</span>
+            </button>
+            
+            <button type="button" class="payment-method-btn" onclick="processPayment('visa')">
+                <div class="payment-logo">
+                    <img src="/img/logos/mastercard-visa-bank-card.png" alt="Visa/Mastercard">
+                </div>
+                <span>Visa/Mastercard</span>
+            </button>
+        </div>
+        
+        <div class="form-actions" style="margin-top: 2rem;">
+            <a href="/pickup?lang={{ lang }}" 
+               hx-get="/pickup?lang={{ lang }}"
+               hx-target="#main-content"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               class="btn-secondary">
+                {{ t.back }}
+            </a>
+        </div>
+    </div>
+</section>
+
+<div id="payment-modal" class="payment-modal" style="display: none;">
+    <div class="payment-modal-content">
+        <div class="payment-loader">
+            <div class="spinner"></div>
+            <h2 id="payment-status">{{ t.processing_payment }}</h2>
+            <p id="payment-method-name"></p>
+            <div id="countdown"></div>
+        </div>
+    </div>
+</div>

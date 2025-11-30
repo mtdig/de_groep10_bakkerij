@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bread & Bytes</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="/img/bakkerij_logo.svg" alt="Bread Bytes Logo">
+                <span>Bread & Bytes</span>
+            </div>
+            <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="/?lang={{ lang }}" class="active">{% if lang == 'nl' %}Home{% else %}Accueil{% endif %}</a>
+                <a href="/products?lang={{ lang }}">{% if lang == 'nl' %}Producten{% else %}Produits{% endif %}</a>
+                <a href="/account?lang={{ lang }}">{% if lang == 'nl' %}Account{% else %}Compte{% endif %}</a>
+                <a href="/cart?lang={{ lang }}" class="cart-link">
+                    <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span id="cart-badge" hx-get="/cart/count" hx-trigger="load, cartUpdated from:body" hx-swap="innerHTML"></span>
+                </a>
+                <select class="lang-dropdown" onchange="window.location.href='/?lang='+this.value">
+                    <option value="nl" {% if lang == 'nl' %}selected{% endif %}>🇳🇱 NL</option>
+                    <option value="fr" {% if lang == 'fr' %}selected{% endif %}>🇫🇷 FR</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.querySelector('.hamburger');
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+    </script>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>{% if lang == 'nl' %}Welkom bij De Groep10 Bakkerij{% else %}Bienvenue à De Groep10 Bakkerij{% endif %}</h1>
+            <p>{% if lang == 'nl' %}Vers brood, ambachtelijk gebakken, elke dag{% else %}Pain frais, cuit artisanalement, chaque jour{% endif %}</p>
+            <a href="/products?lang={{ lang }}" class="cta-button">
+                {% if lang == 'nl' %}Bekijk onze producten{% else %}Voir nos produits{% endif %}
+            </a>
+        </div>
+        <div class="hero-image">
+            <img src="/img/Voorgevel bakkerij.png" alt="De Groep10 Bakkerij">
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🌾</div>
+                    <h3>{% if lang == 'nl' %}Ambachtelijk{% else %}Artisanal{% endif %}</h3>
+                    <p>{% if lang == 'nl' %}Elke dag vers gebakken met traditionele methoden{% else %}Cuit frais chaque jour avec des méthodes traditionnelles{% endif %}</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🥖</div>
+                    <h3>{% if lang == 'nl' %}Kwaliteit{% else %}Qualité{% endif %}</h3>
+                    <p>{% if lang == 'nl' %}Hoogwaardige ingrediënten voor de beste smaak{% else %}Ingrédients de haute qualité pour le meilleur goût{% endif %}</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">❤️</div>
+                    <h3>{% if lang == 'nl' %}Passie{% else %}Passion{% endif %}</h3>
+                    <p>{% if lang == 'nl' %}Gemaakt met liefde en aandacht voor detail{% else %}Fait avec amour et attention aux détails{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2025 De Groep10 Bakkerij. {% if lang == 'nl' %}Alle rechten voorbehouden.{% else %}Tous droits réservés.{% endif %}</p>
+    </footer>
+</body>
+</html>

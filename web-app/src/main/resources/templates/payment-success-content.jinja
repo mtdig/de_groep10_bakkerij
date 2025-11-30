@@ -1,0 +1,33 @@
+<section class="payment-result-section success">
+    <div class="container">
+        <div class="payment-result">
+            <div class="result-icon success-icon">✓</div>
+            {% if isCashPayment is defined and isCashPayment %}
+                <h1>{{ t.order_confirmed }}</h1>
+                <p>{{ t.order_confirmed_msg }}</p>
+            {% else %}
+                <h1>{{ t.payment_success }}</h1>
+                <p>{{ t.payment_success_msg }}</p>
+            {% endif %}
+            <div class="result-actions">
+                <a href="/?lang={{ lang }}" 
+                   hx-get="/?lang={{ lang }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   hx-on::after-swap="htmx.trigger('#cart-badge', 'cartUpdate')"
+                   class="cta-button">
+                    {{ t.back_to_home }}
+                </a>
+                <a href="/account?lang={{ lang }}" 
+                   hx-get="/account?lang={{ lang }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="secondary-button">
+                    {{ t.my_orders }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

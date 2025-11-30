@@ -1,0 +1,200 @@
+<div class="container">
+    {% if username %}
+        <!-- Logged in - show account sections -->
+        <section class="account-section">
+            <div class="account-header">
+                <h1>{{ t.welcome_user|replace('{0}', username) }}</h1>
+                <form action="/logout" method="post" style="display: inline;">
+                    <input type="hidden" name="lang" value="{{ lang }}">
+                    <button type="submit" class="btn-logout">
+                        {{ t.logout }}
+                    </button>
+                </form>
+            </div>
+
+            <!-- Account Sections Navigation -->
+            <div class="account-tabs desktop-only">
+                <button class="tab-btn active" onclick="showTab('orders')">
+                    {{ t.previous_orders }}
+                </button>
+                <button class="tab-btn" onclick="showTab('password')">
+                    {{ t.change_password }}
+                </button>
+                <button class="tab-btn" onclick="showTab('address')">
+                    {{ t.address }}
+                </button>
+            </div>
+
+            <!-- Mobile dropdown navigation -->
+            <div class="account-tabs-mobile mobile-only">
+                <select class="account-tab-select" onchange="showTab(this.value)">
+                    <option value="orders" selected>{{ t.previous_orders }}</option>
+                    <option value="password">{{ t.change_password }}</option>
+                    <option value="address">{{ t.address }}</option>
+                </select>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders-tab" class="tab-content active">
+                <h2>{{ t.order_history }}</h2>
+
+            {% if orders|length > 0 %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h3>{{ t.order_number|replace('{0}', order.orderNumber|string) }}</h3>
+                            <span class="order-date">{{ order.date }}</span>
+                        </div>
+                        <div class="order-items">
+                            {% for item in order.items %}
+                            <div class="order-item">
+                                <img src="/img/{{ item.product.image }}" alt="{% if lang == 'nl' %}{{ item.product.nameNl }}{% elif lang == 'fr' %}{{ item.product.nameFr }}{% elif lang == 'en' %}{{ item.product.nameEn }}{% elif lang == 'de' %}{{ item.product.nameDe }}{% elif lang == 'es' %}{{ item.product.nameEs }}{% elif lang == 'zh' %}{{ item.product.nameZh }}{% else %}{{ item.product.nameNl }}{% endif %}">
+                                <div class="order-item-info">
+                                    <div class="order-item-name">
+                                        {% if lang == 'nl' %}{{ item.product.nameNl }}{% elif lang == 'fr' %}{{ item.product.nameFr }}{% elif lang == 'en' %}{{ item.product.nameEn }}{% elif lang == 'de' %}{{ item.product.nameDe }}{% elif lang == 'es' %}{{ item.product.nameEs }}{% elif lang == 'zh' %}{{ item.product.nameZh }}{% else %}{{ item.product.nameNl }}{% endif %}
+                                    </div>
+                                    <span class="order-item-quantity">
+                                        {{ t.quantity_label }} {{ item.quantity }}
+                                    </span>
+                                </div>
+                                <span class="order-item-price">€{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="order-total">
+                            <strong>{{ t.total }}</strong>
+                            <strong>€{{ "%.2f"|format(order.total) }}</strong>
+                        </div>
+                        <button class="repeat-order-btn" 
+                                hx-post="/order/repeat/{{ order.orderNumber }}?lang={{ lang }}"
+                                hx-target="#cart-badge"
+                                hx-swap="innerHTML">
+                            {{ t.repeat_order }}
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-orders">
+                    <p>{{ t.no_orders }}</p>
+                    <a href="/products?lang={{ lang }}" class="cta-button">
+                        {{ t.discover_products }}
+                    </a>
+                </div>
+            {% endif %}
+            </div>
+
+            <!-- Password Tab -->
+            <div id="password-tab" class="tab-content">
+                <h2>{{ t.change_password }}</h2>
+                <form action="/account/password?lang={{ lang }}" method="post" class="account-form">
+                    <div class="form-group">
+                        <label for="current-password">{{ t.current_password }}</label>
+                        <input type="password" id="current-password" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">{{ t.new_password }}</label>
+                        <input type="password" id="new-password" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">{{ t.confirm_password }}</label>
+                        <input type="password" id="confirm-password" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary">{{ t.update_password }}</button>
+                </form>
+            </div>
+
+            <!-- Address Tab -->
+            <div id="address-tab" class="tab-content">
+                <h2>{{ t.address }}</h2>
+                <form action="/account/address?lang={{ lang }}" method="post" class="account-form">
+                    <div class="form-group">
+                        <label for="street">{{ t.street }}</label>
+                        <input type="text" id="street" name="street" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">{{ t.city }}</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postal-code">{{ t.postal_code }}</label>
+                        <input type="text" id="postal-code" name="postalCode" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">{{ t.country }}</label>
+                        <input type="text" id="country" name="country" required>
+                    </div>
+                    <button type="submit" class="btn-primary">{{ t.update_address }}</button>
+                </form>
+            </div>
+        </section>
+
+        <script>
+            function showTab(tabName) {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Remove active from all buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected tab
+                document.getElementById(tabName + '-tab').classList.add('active');
+                
+                // Set button as active (if clicked from button)
+                if (event && event.target && event.target.classList.contains('tab-btn')) {
+                    event.target.classList.add('active');
+                }
+                
+                // Update dropdown value
+                const dropdown = document.querySelector('.account-tab-select');
+                if (dropdown) {
+                    dropdown.value = tabName;
+                }
+            }
+        </script>
+    {% else %}
+        <!-- Not logged in - show login form -->
+        <section class="login-section">
+            <h1>{{ t.login }}</h1>
+            
+            {% if error == 'invalid' %}
+            <div class="error-message">
+                {{ t.invalid_firstname }}
+            </div>
+            {% endif %}
+
+            <form action="/login" method="post" class="login-form">
+                <input type="hidden" name="lang" value="{{ lang }}">
+                
+                <div class="form-group">
+                    <label for="firstname">
+                        {{ t.firstname }}
+                    </label>
+                    <input type="text" id="firstname" name="firstname" required 
+                           placeholder="{{ t.your_firstname }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        {{ t.password }}
+                    </label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="{{ t.your_password }}">
+                </div>
+
+                <button type="submit" class="btn-login">
+                    {{ t.sign_in }}
+                </button>
+            </form>
+
+            <p class="login-note">
+                {{ t.demo_note }}
+            </p>
+        </section>
+    {% endif %}
+</div>

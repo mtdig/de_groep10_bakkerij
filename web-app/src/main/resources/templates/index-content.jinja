@@ -1,0 +1,67 @@
+<section class="hero">
+    <div class="hero-content">
+        <h1>{{ t.welcome_bakery }}</h1>
+        <p>{{ t.fresh_bread }}</p>
+        <a href="/products?lang={{ lang }}" 
+           hx-get="/products?lang={{ lang }}" 
+           hx-target="#main-content" 
+           hx-swap="innerHTML" 
+           hx-push-url="true"
+           class="cta-button">
+            {{ t.view_products }}
+        </a>
+    </div>
+    <div class="hero-image">
+        <img src="/img/Voorgevel bakkerij.png" alt="De Groep10 Bakkerij">
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌾</div>
+                <h3>{{ t.artisanal }}</h3>
+                <p>{{ t.artisanal_desc }}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🥖</div>
+                <h3>{{ t.quality }}</h3>
+                <p>{{ t.quality_desc }}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3>{{ t.passion }}</h3>
+                <p>{{ t.passion_desc }}</p>
+            </div>
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="info-icon">📞</div>
+                <h3>{{ t.contact }}</h3>
+                <div class="info-content">
+                    <p><strong>{{ t.address }}:</strong><br>
+                    Bakkerijstraat 10<br>
+                    9000 Gent</p>
+                    <p><strong>{{ t.phone }}:</strong><br>
+                    +32 2 123 45 67</p>
+                    <p><strong>Email:</strong><br>
+                    info@groep10bakkerij.be</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🕐</div>
+                <h3>{{ t.opening_hours }}</h3>
+                <div class="info-content">
+                    <p><strong>{{ t.monday_friday }}:</strong><br>
+                    07:00 - 19:00</p>
+                    <p><strong>{{ t.saturday }}:</strong><br>
+                    07:00 - 18:00</p>
+                    <p><strong>{{ t.sunday }}:</strong><br>
+                    08:00 - 14:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
